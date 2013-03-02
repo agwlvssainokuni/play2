@@ -1,0 +1,19 @@
+@(member: Member)
+@import controllers.routes.MemberController
+@import views.html.helper._
+@views.html.main("メンバー詳細") {
+<dl>
+	<dt>メンバー名</dt>
+	<dd>@member.name</dd>
+	<dt>誕生日</dt>
+	<dd>@member.birthday</dd>
+	<dt>グループ名</dt>
+	<dd>@member.group.getOrElse(Group(0, "", List())).name</dd>
+</dl>
+<hr>
+<a href="@MemberController.edit(member.id)">編集</a>
+|
+<a href="@MemberController.delete(member.id)">削除</a>
+<br>
+<a href="@MemberController.list()">一覧へ戻る</a>
+}

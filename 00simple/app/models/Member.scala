@@ -34,7 +34,7 @@ object Member {
         """).as(parse *)
   }
 
-  def find(id: Long): Option[Member] = DB.withConnection { implicit c =>
+  def find(id: Int): Option[Member] = DB.withConnection { implicit c =>
     SQL("""
         SELECT
             A.id,
@@ -83,7 +83,7 @@ object Member {
       'id -> id, 'name -> name, 'birthday -> birthday, 'groupId -> groupId).executeUpdate()
   }
 
-  def delete(id: Long) = DB.withConnection { implicit c =>
+  def delete(id: Int) = DB.withConnection { implicit c =>
     SQL("""
         DELETE FROM members WHERE id = {id}
         """).on(

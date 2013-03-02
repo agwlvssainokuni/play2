@@ -1,0 +1,11 @@
+@(id: Int, groupForm: Form[Group])
+@import controllers.routes.GroupController
+@import views.html.helper._
+@views.html.main("グループ編集") {
+@form(controllers.routes.GroupController.update(id)) {
+@inputText(groupForm("name"))
+<input type="submit" value="更新">
+}
+<br>
+<a href="@GroupController.list()">一覧へ戻る</a>
+}

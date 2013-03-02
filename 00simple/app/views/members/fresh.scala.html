@@ -1,0 +1,13 @@
+@(memberForm: Form[Member], groups: List[Group])
+@import controllers.routes.MemberController
+@import views.html.helper._
+@views.html.main("メンバー登録") {
+@form(controllers.routes.MemberController.create()) {
+@inputText(memberForm("name"))
+@inputText(memberForm("birthday"))
+@select(memberForm("group.id"), groups map { g => g.id.toString -> g.name })
+<input type="submit" value="登録">
+}
+<br>
+<a href="@MemberController.list()">一覧へ戻る</a>
+}

@@ -1,0 +1,29 @@
+@(members: List[Member])
+@import controllers.routes.MemberController
+@import views.html.helper._
+@views.html.main("メンバー一覧") {
+<table>
+	<thead>
+		<tr>
+			<th>メンバー名</th>
+			<th>誕生日</th>
+			<th></th>
+			<th></th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@members.map { member =>
+		<tr>
+			<td><a href="@MemberController.show(member.id)">@member.name</a></td>
+			<td>@member.birthday</td>
+			<td><a href="@MemberController.edit(member.id)">編集</a></td>
+			<td><a href="@MemberController.delete(member.id)">削除</a></td>
+		</tr>
+		}
+	</tbody>
+
+</table>
+<hr>
+<a href="@MemberController.fresh()">登録</a>
+}

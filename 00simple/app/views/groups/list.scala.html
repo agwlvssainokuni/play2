@@ -1,0 +1,27 @@
+@(groups: List[Group])
+@import controllers.routes.GroupController
+@import views.html.helper._
+@views.html.main("グループ一覧") {
+<table>
+	<thead>
+		<tr>
+			<th>グループ名</th>
+			<th></th>
+			<th></th>
+		</tr>
+	</thead>
+
+	<tbody>
+		@groups.map { group =>
+		<tr>
+			<td><a href="@GroupController.show(group.id)">@group.name</a></td>
+			<td><a href="@GroupController.edit(group.id)">編集</a></td>
+			<td><a href="@GroupController.delete(group.id)">削除</a></td>
+		</tr>
+		}
+	</tbody>
+
+</table>
+<hr>
+<a href="@GroupController.fresh()">登録</a>
+}

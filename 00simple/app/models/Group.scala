@@ -21,7 +21,7 @@ object Group {
         """).as(parse *)
   }
 
-  def find(id: Long): Option[Group] = DB.withConnection { implicit c =>
+  def find(id: Int): Option[Group] = DB.withConnection { implicit c =>
     SQL("""
         SELECT id, name FROM groups WHERE id = {id}
         """).on(
@@ -42,7 +42,7 @@ object Group {
       'id -> id, 'name -> name).executeUpdate()
   }
 
-  def delete(id: Long) = DB.withConnection { implicit c =>
+  def delete(id: Int) = DB.withConnection { implicit c =>
     SQL("""
         DELETE FROM groups WHERE id = {id}
         """).on(
