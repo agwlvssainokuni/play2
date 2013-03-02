@@ -8,7 +8,7 @@
 	<dt>誕生日</dt>
 	<dd>@member.birthday</dd>
 	<dt>グループ名</dt>
-	<dd>@member.group.getOrElse(Group(0, "", List())).name</dd>
+	<dd>@member.group.getOrElse(Group(0, "")).name</dd>
 </dl>
 <hr>
 <a href="@MemberController.edit(member.id)">編集</a>

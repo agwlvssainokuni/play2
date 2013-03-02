@@ -5,13 +5,15 @@ import anorm.SqlParser._
 import play.api.Play.current
 import play.api.db._
 
-case class Group(id: Int, name: String, var members: List[Member])
+case class Group(id: Int, name: String) {
+  var members: List[Member] = List()
+}
 
 object Group {
 
   private val parse = {
     get[Int]("id") ~ get[String]("name") map {
-      case id ~ name => Group(id, name, List())
+      case id ~ name => Group(id, name)
     }
   }
 

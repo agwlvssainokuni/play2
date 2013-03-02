@@ -8,16 +8,11 @@ import play.api.mvc._
 
 object MemberController extends Controller {
 
-  private val groupMapping = mapping(
-    "id" -> number,
-    "name" -> ignored(""),
-    "members" -> ignored(List[Member]()))(Group.apply)(Group.unapply)
-
   val memberForm: Form[Member] = Form(mapping(
     "id" -> ignored(0),
     "name" -> nonEmptyText(4, 255),
     "birthday" -> optional(date("yyyyMMdd")),
-    "group" -> optional(groupMapping))(Member.apply)(Member.unapply))
+    "groupId" -> number)(Member.apply)(Member.unapply))
 
   def list() = Action {
     Ok(html.members.list(Member.list()))
@@ -31,9 +26,9 @@ object MemberController extends Controller {
     memberForm.bindFromRequest().fold(
       errors => BadRequest(html.members.fresh(errors, Group.list())),
       member => {
-        member.group match {
-          case Some(group) =>
-            Member.create(member.name, member.birthday, group.id)
+        Group.find(member.groupId) match {
+          case Some(_) =>
+            Member.create(member.name, member.birthday, member.groupId)
             Redirect(routes.MemberController.list())
           case None =>
             BadRequest(html.members.fresh(memberForm.fill(member), Group.list()))
@@ -59,9 +54,9 @@ object MemberController extends Controller {
     memberForm.bindFromRequest().fold(
       errors => BadRequest(html.members.edit(id, errors, Group.list())),
       member => {
-        member.group match {
-          case Some(group) =>
-            Member.update(id, member.name, member.birthday, group.id) match {
+        Group.find(member.groupId) match {
+          case Some(_) =>
+            Member.update(id, member.name, member.birthday, member.groupId) match {
               case 0 => NotFound
               case _ => Redirect(routes.MemberController.show(id))
             }

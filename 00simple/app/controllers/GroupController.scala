@@ -10,8 +10,7 @@ object GroupController extends Controller {
 
   val groupForm: Form[Group] = Form(mapping(
     "id" -> ignored(0),
-    "name" -> nonEmptyText(4, 255),
-    "members" -> ignored(List[Member]()))(Group.apply)(Group.unapply))
+    "name" -> nonEmptyText(4, 255))(Group.apply)(Group.unapply))
 
   def list() = Action {
     Ok(html.groups.list(Group.list()))

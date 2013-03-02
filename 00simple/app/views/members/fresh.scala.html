@@ -5,7 +5,7 @@
 @form(controllers.routes.MemberController.create()) {
 @inputText(memberForm("name"))
 @inputText(memberForm("birthday"))
-@select(memberForm("group.id"), groups map { g => g.id.toString -> g.name })
+@select(memberForm("groupId"), groups map { g => g.id.toString -> g.name })
 <input type="submit" value="登録">
 }
 <br>

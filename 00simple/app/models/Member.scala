@@ -6,31 +6,35 @@ import play.api.Play.current
 import play.api.db._
 import java.util.Date
 
-case class Member(id: Int, name: String, birthday: Option[Date], group: Option[Group])
+case class Member(id: Int, name: String, birthday: Option[Date], groupId: Int) {
+  var group: Option[Group] = None
+}
 
 object Member {
 
   private val parse = {
-    get[Int]("id") ~ get[String]("name") ~ get[Option[Date]]("birthday") map {
-      case id ~ name ~ birthday => Member(id, name, birthday, None)
+    get[Int]("members.id") ~ get[String]("members.name") ~ get[Option[Date]]("members.birthday") ~ get[Int]("members.group_id") map {
+      case id ~ name ~ birthday ~ groupId => Member(id, name, birthday, groupId)
     }
   }
 
   private val parseGroup = {
     get[Int]("groups.id") ~ get[String]("groups.name") map {
-      case groupId ~ groupName => Group(groupId, groupName, List())
+      case groupId ~ groupName => Group(groupId, groupName)
     }
   }
 
   private val parseJoined = {
-    get[Int]("members.id") ~ get[String]("members.name") ~ get[Option[Date]]("members.birthday") ~ parseGroup map {
-      case id ~ name ~ birthday ~ group => Member(id, name, birthday, Some(group))
+    parse ~ parseGroup map {
+      case member ~ group =>
+        member.group = Some(group)
+        member
     }
   }
 
   def list(): List[Member] = DB.withConnection { implicit c =>
     SQL("""
-        SELECT id, name, birthday FROM members
+        SELECT id, name, birthday, group_id FROM members
         """).as(parse *)
   }
 
@@ -40,6 +44,7 @@ object Member {
             A.id,
             A.name,
             A.birthday,
+            A.group_id,
             B.id,
             B.name
         FROM
