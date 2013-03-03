@@ -34,7 +34,7 @@ class MemberSpec extends Specification {
           // 実行
           val result = Member.list()
           // 検証
-          result must equalTo(List())
+          result must beEmpty
         }
       }
     }
@@ -63,7 +63,7 @@ class MemberSpec extends Specification {
           // 実行
           val result = Member.find(1)
           // 検証
-          result must equalTo(None)
+          result must beNone
         }
       }
     }
@@ -76,10 +76,9 @@ class MemberSpec extends Specification {
           // 実行
           val result = Member.find(1)
           // 検証
-          result.isDefined must beTrue
-          result.get.name must equalTo(members(0)._1)
-          result.get.birthday.isDefined must beTrue
-          result.get.group.isDefined must beFalse
+          result must beSome.which { _.name == members(0)._1 }
+          result must beSome.which { _.birthday.isDefined }
+          result must beSome.which { _.group.isEmpty }
         }
       }
     }
@@ -92,7 +91,7 @@ class MemberSpec extends Specification {
           // 実行
           val result = Member.find(0)
           // 検証
-          result must equalTo(None)
+          result must beNone
         }
       }
     }
@@ -107,7 +106,7 @@ class MemberSpec extends Specification {
           // 実行
           val result = Member.findWithGroup(1)
           // 検証
-          result must equalTo(None)
+          result must beNone
         }
       }
     }
@@ -120,11 +119,9 @@ class MemberSpec extends Specification {
           // 実行
           val result = Member.findWithGroup(1)
           // 検証
-          result.isDefined must beTrue
-          result.get.name must equalTo(members(0)._1)
-          result.get.birthday.isDefined must beTrue
-          result.get.group.isDefined must beTrue
-          result.get.group.get.name must equalTo(groups(0))
+          result must beSome.which { _.name == members(0)._1 }
+          result must beSome.which { _.birthday.isDefined }
+          result must beSome.which { _.group must beSome.which { _.name == groups(0) } }
         }
       }
     }
@@ -137,7 +134,7 @@ class MemberSpec extends Specification {
           // 実行
           val result = Member.findWithGroup(0)
           // 検証
-          result must equalTo(None)
+          result must beNone
         }
       }
     }
@@ -156,12 +153,12 @@ class MemberSpec extends Specification {
           val post = Member.findWithGroup(1)
           // 検証
           result must equalTo(1)
-          pre.get.name must equalTo("メンバー００")
-          pre.get.birthday.isDefined must beTrue
-          pre.get.group.get.name must equalTo("グループ００")
-          post.get.name must equalTo("メンバー１０")
-          post.get.birthday.isDefined must beFalse
-          post.get.group.get.name must equalTo("グループ０１")
+          pre must beSome.which { _.name == "メンバー００" }
+          pre must beSome.which { _.birthday.isDefined }
+          pre must beSome.which { _.group must beSome.which { _.name == "グループ００" } }
+          post must beSome.which { _.name == "メンバー１０" }
+          post must beSome.which { _.birthday.isEmpty }
+          post must beSome.which { _.group must beSome.which { _.name == "グループ０１" } }
         }
       }
     }
@@ -193,8 +190,8 @@ class MemberSpec extends Specification {
           val post = Member.find(1)
           // 検証
           result must equalTo(1)
-          pre.isDefined must beTrue
-          post.isDefined must beFalse
+          pre must beSome
+          post must beNone
         }
       }
     }

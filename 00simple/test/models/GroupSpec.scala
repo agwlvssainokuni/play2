@@ -34,7 +34,7 @@ class GroupSpec extends Specification {
           // 実行
           val result = Group.list()
           // 検証
-          result must equalTo(List())
+          result must beEmpty
         }
       }
     }
@@ -63,7 +63,7 @@ class GroupSpec extends Specification {
           // 実行
           val result = Group.find(1)
           // 検証
-          result must equalTo(None)
+          result must beNone
         }
       }
     }
@@ -76,9 +76,8 @@ class GroupSpec extends Specification {
           // 実行
           val result = Group.find(1)
           // 検証
-          result.isDefined must beTrue
-          result.get.name must equalTo(groups(0))
-          result.get.members.isEmpty must beTrue
+          result must beSome.which { _.name == groups(0) }
+          result must beSome.which { _.members.isEmpty }
         }
       }
     }
@@ -91,7 +90,7 @@ class GroupSpec extends Specification {
           // 実行
           val result = Group.find(0)
           // 検証
-          result must equalTo(None)
+          result must beNone
         }
       }
     }
@@ -106,7 +105,7 @@ class GroupSpec extends Specification {
           // 実行
           val result = Group.findWithMembers(1)
           // 検証
-          result must equalTo(None)
+          result must beNone
         }
       }
     }
@@ -119,9 +118,8 @@ class GroupSpec extends Specification {
           // 実行
           val result = Group.findWithMembers(1)
           // 検証
-          result.isDefined must beTrue
-          result.get.name must equalTo(groups(0))
-          result.get.members.isEmpty must beFalse
+          result must beSome.which { _.name == groups(0) }
+          result must beSome.which { !_.members.isEmpty }
         }
       }
     }
@@ -134,7 +132,7 @@ class GroupSpec extends Specification {
           // 実行
           val result = Group.findWithMembers(0)
           // 検証
-          result must equalTo(None)
+          result must beNone
         }
       }
     }
@@ -153,8 +151,8 @@ class GroupSpec extends Specification {
           val post = Group.find(1)
           // 検証
           result must equalTo(1)
-          pre.get.name must equalTo("グループ００")
-          post.get.name must equalTo("グループ１０")
+          pre must beSome.which { _.name == "グループ００" }
+          post must beSome.which { _.name == "グループ１０" }
         }
       }
     }
@@ -186,8 +184,8 @@ class GroupSpec extends Specification {
           val post = Group.find(1)
           // 検証
           result must equalTo(1)
-          pre.isDefined must beTrue
-          post.isDefined must beFalse
+          pre must beSome
+          post must beNone
         }
       }
     }
