@@ -7,7 +7,7 @@ import views.html
 object Application extends Controller {
 
   def index = Action {
-    Ok(html.index("Your new application is ready."))
+    Ok(html.index())
   }
 
 }
