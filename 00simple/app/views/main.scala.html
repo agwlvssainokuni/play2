@@ -8,8 +8,19 @@
 <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
 </head>
 <body>
-<h1>@title</h1>
-<hr>
+	<h1>@title</h1>
+	<div class="menuMain">
+		<a href="@routes.Application.index()">ホーム</a> | <a
+			href="@routes.GroupController.list()">グループ管理</a> | <a
+			href="@routes.MemberController.list()">メンバー管理</a>
+	</div>
+	<hr class="menuClear">
 @content
+	<hr class="menuClear">
+	<div class="menuMain">
+		<a href="@routes.Application.index()">ホーム</a> | <a
+			href="@routes.GroupController.list()">グループ管理</a> | <a
+			href="@routes.MemberController.list()">メンバー管理</a>
+	</div>
 </body>
 </html>

@@ -1,10 +1,10 @@
 package models
 
+import java.sql.Connection
+import java.util.Date
+
 import anorm._
 import anorm.SqlParser._
-import play.api.Play.current
-import play.api.db._
-import java.util.Date
 
 case class Member(id: Int, name: String, birthday: Option[Date], groupId: Int) {
   var group: Option[Group] = None
@@ -18,27 +18,32 @@ object Member {
     }
   }
 
-  private val parseGroup = {
-    get[Int]("groups.id") ~ get[String]("groups.name") map {
-      case groupId ~ groupName => Group(groupId, groupName)
-    }
-  }
-
   private val parseJoined = {
-    parse ~ parseGroup map {
+    parse ~ Group.parse map {
       case member ~ group =>
         member.group = Some(group)
         member
     }
   }
 
-  def list(): List[Member] = DB.withConnection { implicit c =>
+  def list()(implicit c: Connection): List[Member] =
     SQL("""
         SELECT id, name, birthday, group_id FROM members
         """).as(parse *)
-  }
 
-  def find(id: Int): Option[Member] = DB.withConnection { implicit c =>
+  def listByGroupId(groupId: Int)(implicit c: Connection): List[Member] =
+    SQL("""
+        SELECT id, name, birthday, group_id FROM members WHERE group_id = {groupId}
+        """).on(
+      'groupId -> groupId).as(parse *)
+
+  def find(id: Int)(implicit c: Connection): Option[Member] =
+    SQL("""
+        SELECT id, name, birthday, group_id FROM members WHERE id = {id}
+        """).on(
+      'id -> id).as(parse.singleOpt)
+
+  def findWithGroup(id: Int)(implicit c: Connection): Option[Member] =
     SQL("""
         SELECT
             A.id,
@@ -57,9 +62,8 @@ object Member {
             A.id = {id}
         """).on(
       'id -> id).as(parseJoined.singleOpt)
-  }
 
-  def create(name: String, birthday: Option[Date], groupId: Int) = DB.withConnection { implicit c =>
+  def create(name: String, birthday: Option[Date], groupId: Int)(implicit c: Connection) =
     SQL("""
         INSERT INTO members (
             name,
@@ -73,9 +77,8 @@ object Member {
         )
         """).on(
       'name -> name, 'birthday -> birthday, 'groupId -> groupId).executeUpdate()
-  }
 
-  def update(id: Int, name: String, birthday: Option[Date], groupId: Int) = DB.withConnection { implicit c =>
+  def update(id: Int, name: String, birthday: Option[Date], groupId: Int)(implicit c: Connection) =
     SQL("""
         UPDATE members
         SET
@@ -86,13 +89,11 @@ object Member {
             id = {id}
         """).on(
       'id -> id, 'name -> name, 'birthday -> birthday, 'groupId -> groupId).executeUpdate()
-  }
 
-  def delete(id: Int) = DB.withConnection { implicit c =>
+  def delete(id: Int)(implicit c: Connection) =
     SQL("""
         DELETE FROM members WHERE id = {id}
         """).on(
       'id -> id).executeUpdate()
-  }
 
 }
