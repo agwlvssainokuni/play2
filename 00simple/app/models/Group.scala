@@ -28,14 +28,42 @@ object Group {
         """).on(
       'id -> id).as(parse.singleOpt)
 
-  def findWithMembers(id: Int)(implicit c: Connection): Option[Group] =
-    find(id) match {
-      case Some(group) =>
-        group.members = Member.listByGroupId(id)
-        Some(group)
-      case None =>
-        None
+  def findWithMembers(id: Int)(implicit c: Connection): Option[Group] = {
+    val resultList = SQL("""
+        SELECT
+            A.id,
+            A.name,
+            B.id,
+            B.name,
+            B.birthday,
+            B.group_id
+        FROM
+            groups AS A
+            LEFT OUTER JOIN
+            members AS B
+            ON
+              A.id = B.group_id
+        WHERE
+            A.id = {id}
+        """).on(
+      'id -> id).as(((parse ~ Member.parse) map { case grp ~ mem => (grp, mem) })*)
+
+    val groupList = for {
+      (grp, gmems) <- resultList groupBy {
+        case (grp, _) => grp
+      }
+      mems = gmems map {
+        case (_, mem) =>
+          mem.group = Option(grp)
+          mem
+      }
+    } yield {
+      grp.members = mems
+      grp
     }
+
+    groupList.headOption
+  }
 
   def create(name: String)(implicit c: Connection) =
     SQL("""
