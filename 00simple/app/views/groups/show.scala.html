@@ -5,6 +5,27 @@
 <dl>
 	<dt>グループ名</dt>
 	<dd>@group.name</dd>
+	<dt>メンバー一覧</dt>
+	<dd>
+		<table>
+			<thead>
+				<tr>
+					<th>メンバー名</th>
+					<th>誕生日</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@group.members.map { member =>
+				<tr>
+					<td>@member.name</td>
+					<td>@member.birthday</td>
+				</tr>
+				}
+			</tbody>
+
+		</table>
+	</dd>
 </dl>
 <a href="@GroupController.edit(group.id)">編集</a>
 |

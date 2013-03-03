@@ -47,12 +47,12 @@ object Member {
         WHERE
             A.id = {id}
         """).on(
-      'id -> id).as(((parse ~ Group.parse) map { case mem ~ grp => (mem, grp) })*)
+      'id -> id).as((parse ~ (Group.parse ?) map { case mem ~ grp => (mem, grp) })*)
 
     val memberList = for {
       (mem, grp) <- resultList
     } yield {
-      mem.group = Option(grp)
+      mem.group = grp
       mem
     }
 

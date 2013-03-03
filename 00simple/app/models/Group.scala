@@ -46,19 +46,18 @@ object Group {
         WHERE
             A.id = {id}
         """).on(
-      'id -> id).as(((parse ~ Member.parse) map { case grp ~ mem => (grp, mem) })*)
+      'id -> id).as((parse ~ (Member.parse ?) map { case grp ~ mem => (grp, mem) })*)
 
     val groupList = for {
-      (grp, gmems) <- resultList groupBy {
-        case (grp, _) => grp
-      }
-      mems = gmems map {
-        case (_, mem) =>
-          mem.group = Option(grp)
-          mem
-      }
+      (grp, gmems) <- resultList groupBy { case (grp, _) => grp }
     } yield {
-      grp.members = mems
+      grp.members = gmems flatMap {
+        case (_, Some(mem)) =>
+          mem.group = Option(grp)
+          List(mem)
+        case _ =>
+          List()
+      }
       grp
     }
 
