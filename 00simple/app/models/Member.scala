@@ -13,7 +13,7 @@ case class Member(id: Int, name: String, birthday: Option[Date], groupId: Int) {
 object Member {
 
   val parse = {
-    get[Int]("members.id") ~ get[String]("members.name") ~ get[Option[Date]]("members.birthday") ~ get[Int]("members.group_id") map {
+    int("members.id") ~ str("members.name") ~ (date("members.birthday")?) ~ int("members.group_id") map {
       case id ~ name ~ birthday ~ groupId => Member(id, name, birthday, groupId)
     }
   }
@@ -27,10 +27,10 @@ object Member {
     SQL("""
         SELECT id, name, birthday, group_id FROM members WHERE id = {id}
         """).on(
-      'id -> id).as(parse.singleOpt)
+      'id -> id).as(parse singleOpt)
 
-  def findWithGroup(id: Int)(implicit c: Connection): Option[Member] = {
-    val resultList = SQL("""
+  def findWithGroup(id: Int)(implicit c: Connection): Option[Member] =
+    SQL("""
         SELECT
             A.id,
             A.name,
@@ -47,17 +47,13 @@ object Member {
         WHERE
             A.id = {id}
         """).on(
-      'id -> id).as((parse ~ (Group.parse ?) map { case mem ~ grp => (mem, grp) })*)
-
-    val memberList = for {
-      (mem, grp) <- resultList
-    } yield {
-      mem.group = grp
-      mem
-    }
-
-    memberList.headOption
-  }
+      'id -> id).as((parse ~ (Group.parse ?) map {
+        case mem ~ grp => (mem, grp)
+      })*) map {
+        case (mem, grp) =>
+          mem.group = grp
+          mem
+      } headOption
 
   def create(name: String, birthday: Option[Date], groupId: Int)(implicit c: Connection) =
     SQL("""

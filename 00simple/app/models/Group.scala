@@ -12,7 +12,7 @@ case class Group(id: Int, name: String) {
 object Group {
 
   val parse = {
-    get[Int]("groups.id") ~ get[String]("groups.name") map {
+    int("groups.id") ~ str("groups.name") map {
       case id ~ name => Group(id, name)
     }
   }
@@ -26,10 +26,10 @@ object Group {
     SQL("""
         SELECT id, name FROM groups WHERE id = {id}
         """).on(
-      'id -> id).as(parse.singleOpt)
+      'id -> id).as(parse singleOpt)
 
-  def findWithMembers(id: Int)(implicit c: Connection): Option[Group] = {
-    val resultList = SQL("""
+  def findWithMembers(id: Int)(implicit c: Connection): Option[Group] =
+    SQL("""
         SELECT
             A.id,
             A.name,
@@ -46,23 +46,21 @@ object Group {
         WHERE
             A.id = {id}
         """).on(
-      'id -> id).as((parse ~ (Member.parse ?) map { case grp ~ mem => (grp, mem) })*)
-
-    val groupList = for {
-      (grp, gmems) <- resultList groupBy { case (grp, _) => grp }
-    } yield {
-      grp.members = gmems flatMap {
-        case (_, Some(mem)) =>
-          mem.group = Option(grp)
-          List(mem)
-        case _ =>
-          List()
-      }
-      grp
-    }
-
-    groupList.headOption
-  }
+      'id -> id).as((parse ~ (Member.parse ?) map {
+        case grp ~ mem => (grp, mem)
+      })*) groupBy {
+        case (grp, _) => grp
+      } map {
+        case (grp, gmems) =>
+          grp.members = gmems.flatMap {
+            case (_, Some(mem)) =>
+              mem.group = Option(grp)
+              List(mem)
+            case _ =>
+              List()
+          }
+          grp
+      } headOption
 
   def create(name: String)(implicit c: Connection) =
     SQL("""
