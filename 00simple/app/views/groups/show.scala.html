@@ -1,4 +1,4 @@
-@(group: Group)
+@(group: Group, members: List[Member])
 @import controllers.routes.GroupController
 @import views.html.helper._
 @views.html.main("グループ詳細") {
@@ -16,7 +16,7 @@
 			</thead>
 
 			<tbody>
-				@group.members.map { member =>
+				@members.map { member =>
 				<tr>
 					<td>@member.name</td>
 					<td>@member.birthday</td>

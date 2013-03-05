@@ -6,9 +6,7 @@ import java.util.Date
 import anorm._
 import anorm.SqlParser._
 
-case class Member(id: Int, name: String, birthday: Option[Date], groupId: Int) {
-  var group: Option[Group] = None
-}
+case class Member(id: Int, name: String, birthday: Option[Date], groupId: Int)
 
 object Member {
 
@@ -29,7 +27,7 @@ object Member {
         """).on(
       'id -> id).as(parse singleOpt)
 
-  def findWithGroup(id: Int)(implicit c: Connection): Option[Member] =
+  def findWithGroup(id: Int)(implicit c: Connection): Option[(Member, Option[Group])] =
     SQL("""
         SELECT
             A.id,
@@ -49,11 +47,7 @@ object Member {
         """).on(
       'id -> id).as((parse ~ (Group.parse ?) map {
         case mem ~ grp => (mem, grp)
-      })*) map {
-        case (mem, grp) =>
-          mem.group = grp
-          mem
-      } headOption
+      })*) headOption
 
   def create(name: String, birthday: Option[Date], groupId: Int)(implicit c: Connection) =
     SQL("""

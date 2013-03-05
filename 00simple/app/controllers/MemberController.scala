@@ -47,7 +47,7 @@ object MemberController extends Controller {
   def show(id: Int) = Action {
     DB.withConnection { implicit c =>
       Member.findWithGroup(id) match {
-        case Some(member) => Ok(html.members.show(member))
+        case Some((member, group)) => Ok(html.members.show(member, group))
         case None => NotFound
       }
     }

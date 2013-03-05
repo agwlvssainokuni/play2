@@ -1,4 +1,4 @@
-@(member: Member)
+@(member: Member, group: Option[Group])
 @import controllers.routes.MemberController
 @import views.html.helper._
 @views.html.main("メンバー詳細") {
@@ -8,7 +8,7 @@
 	<dt>誕生日</dt>
 	<dd>@member.birthday</dd>
 	<dt>グループ名</dt>
-	<dd>@member.group.getOrElse(Group(0, "")).name</dd>
+	<dd>@group.getOrElse(Group(0, "")).name</dd>
 </dl>
 <a href="@MemberController.edit(member.id)">編集</a>
 |

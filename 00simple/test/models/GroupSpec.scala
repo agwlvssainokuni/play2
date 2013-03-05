@@ -77,7 +77,6 @@ class GroupSpec extends Specification {
           val result = Group.find(1)
           // 検証
           result must beSome.which { _.name == groups(0) }
-          result must beSome.which { _.members.isEmpty }
         }
       }
     }
@@ -118,8 +117,8 @@ class GroupSpec extends Specification {
           // 実行
           val result = Group.findWithMembers(1)
           // 検証
-          result must beSome.which { _.name == groups(0) }
-          result must beSome.which { !_.members.isEmpty }
+          result must beSome.which { case (g, _) => g.name == groups(0) }
+          result must beSome.which { case (_, m) => !m.isEmpty }
         }
       }
     }

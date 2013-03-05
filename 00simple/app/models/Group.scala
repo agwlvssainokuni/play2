@@ -5,9 +5,7 @@ import java.sql.Connection
 import anorm._
 import anorm.SqlParser._
 
-case class Group(id: Int, name: String) {
-  var members: List[Member] = List()
-}
+case class Group(id: Int, name: String)
 
 object Group {
 
@@ -28,7 +26,7 @@ object Group {
         """).on(
       'id -> id).as(parse singleOpt)
 
-  def findWithMembers(id: Int)(implicit c: Connection): Option[Group] =
+  def findWithMembers(id: Int)(implicit c: Connection): Option[(Group, List[Member])] =
     SQL("""
         SELECT
             A.id,
@@ -52,14 +50,10 @@ object Group {
         case (grp, _) => grp
       } map {
         case (grp, gmems) =>
-          grp.members = gmems.flatMap {
-            case (_, Some(mem)) =>
-              mem.group = Option(grp)
-              List(mem)
-            case _ =>
-              List()
-          }
-          grp
+          (grp, gmems.flatMap {
+            case (_, Some(mem)) => List(mem)
+            case _ => List()
+          })
       } headOption
 
   def create(name: String)(implicit c: Connection) =
