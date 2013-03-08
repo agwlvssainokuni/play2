@@ -7,3 +7,25 @@ GET     /                           controllers.Application.index
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+
+########################################################################
+# サンプルアプリ
+
+# グループ
+GET     /groups				controllers.GroupController.list()
+GET     /groups/fresh		controllers.GroupController.fresh()
+POST    /groups/create		controllers.GroupController.create()
+GET     /groups/:id			controllers.GroupController.show(id: Int)
+GET     /groups/:id/edit	controllers.GroupController.edit(id: Int)
+POST    /groups/:id/update	controllers.GroupController.update(id: Int)
+GET     /groups/:id/delete	controllers.GroupController.delete(id: Int)
+
+# メンバー
+GET     /members			controllers.MemberController.list()
+GET     /members/fresh		controllers.MemberController.fresh()
+POST    /members/create		controllers.MemberController.create()
+GET     /members/:id		controllers.MemberController.show(id: Int)
+GET     /members/:id/edit	controllers.MemberController.edit(id: Int)
+POST    /members/:id/update	controllers.MemberController.update(id: Int)
+GET     /members/:id/delete	controllers.MemberController.delete(id: Int)
