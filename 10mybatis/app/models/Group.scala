@@ -5,7 +5,7 @@ import java.util.Date
 import org.mybatis.scala.mapping._
 import org.mybatis.scala.mapping.Binding._
 
-case class Group(var id: Int, var name: String) {
+case class Group(id: Int, name: String) {
   var members: Seq[Member] = null
 }
 
@@ -78,10 +78,10 @@ object Group {
       </xsql>
   }
 
-  val update = new Update[Group] {
+  val update = new Update[(Int, Group)] {
     def xsql =
       <xsql>
-        UPDATE groups SET name ={ ?[String]("name") } WHERE id ={ ?[Int]("id") }
+        UPDATE groups SET name ={ ?[String]("_2.name") } WHERE id ={ ?[Int]("_1") }
       </xsql>
   }
 

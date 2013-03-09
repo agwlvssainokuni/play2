@@ -157,7 +157,7 @@ class MemberSpec extends Specification {
           createData(groups, members)
           // 実行
           val pre = Member.findWithGroup(1)
-          val result = Member.update(Member(1, "メンバー１０", None, 2))
+          val result = Member.update((1, Member(-1, "メンバー１０", None, 2)))
           val post = Member.findWithGroup(1)
           // 検証
           result must equalTo(1)
@@ -178,7 +178,7 @@ class MemberSpec extends Specification {
           // 事前条件
           createData(groups, members)
           // 実行
-          val result = Member.update(Member(0, "メンバー１０", None, 1))
+          val result = Member.update((0, Member(-1, "メンバー１０", None, 1)))
           // 検証
           result must equalTo(0)
         }

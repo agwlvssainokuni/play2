@@ -155,7 +155,7 @@ class GroupSpec extends Specification {
           createData(groups, members)
           // 実行
           val pre = Group.find(1)
-          val result = Group.update(Group(1, "グループ１０"))
+          val result = Group.update((1, Group(-1, "グループ１０")))
           val post = Group.find(1)
           // 検証
           result must equalTo(1)
@@ -172,7 +172,7 @@ class GroupSpec extends Specification {
           // 事前条件
           createData(groups, members)
           // 実行
-          val result = Group.update(Group(0, "グループ１０"))
+          val result = Group.update((0, Group(-1, "グループ１０")))
           // 検証
           result must equalTo(0)
         }
