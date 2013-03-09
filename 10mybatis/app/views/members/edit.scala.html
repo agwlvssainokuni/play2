@@ -1,0 +1,13 @@
+@(id: Int, memberForm: Form[Member], groups: Seq[Group])
+@import controllers.routes.MemberController
+@import views.html.helper._
+@views.html.main("メンバー編集") {
+@form(controllers.routes.MemberController.update(id)) {
+@inputText(memberForm("name"))
+@inputText(memberForm("birthday"))
+@select(memberForm("groupId"), groups map { g => g.id.toString -> g.name })
+<input type="submit" value="更新">
+}
+<br>
+<a href="@MemberController.list()">一覧へ戻る</a>
+}
