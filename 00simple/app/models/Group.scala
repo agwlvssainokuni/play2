@@ -6,18 +6,21 @@ import anorm._
 import anorm.SqlParser._
 
 case class Group(name: String) {
-  var id: Option[Int] = None
+  var id: Pk[Int] = NotAssigned
 }
 
 object Group {
 
   val parse = {
     int("groups.id") ~ str("groups.name") map {
-      case id ~ name =>
-        val group = Group(name)
-        group.id = Some(id)
-        group
+      case id ~ name => Group(Id(id), name)
     }
+  }
+
+  def apply(id: Pk[Int], name: String): Group = {
+    val group = Group(name)
+    group.id = id
+    group
   }
 
   def list()(implicit c: Connection): List[Group] =

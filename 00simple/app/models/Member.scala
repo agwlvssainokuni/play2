@@ -7,18 +7,21 @@ import anorm._
 import anorm.SqlParser._
 
 case class Member(name: String, birthday: Option[Date], groupId: Int) {
-  var id: Option[Int] = None
+  var id: Pk[Int] = NotAssigned
 }
 
 object Member {
 
   val parse = {
     int("members.id") ~ str("members.name") ~ (date("members.birthday")?) ~ int("members.group_id") map {
-      case id ~ name ~ birthday ~ groupId =>
-        val member = Member(name, birthday, groupId)
-        member.id = Some(id)
-        member
+      case id ~ name ~ birthday ~ groupId => Member(Id(id), name, birthday, groupId)
     }
+  }
+
+  def apply(id: Pk[Int], name: String, birthday: Option[Date], groupId: Int): Member = {
+    val member = Member(name, birthday, groupId)
+    member.id = id
+    member
   }
 
   def list()(implicit c: Connection): List[Member] =
