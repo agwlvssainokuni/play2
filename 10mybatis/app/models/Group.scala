@@ -1,6 +1,9 @@
 package models
 
+import java.util.Date
+
 import org.mybatis.scala.mapping._
+import org.mybatis.scala.mapping.Binding._
 
 case class Group(var id: Int, var name: String) {
   var members: Seq[Member] = null
@@ -9,6 +12,12 @@ case class Group(var id: Int, var name: String) {
 object Group {
 
   val list = new SelectList[Group] {
+
+    resultMap = new ResultMap[Group] {
+      idArg("id", T[Int])
+      arg("name", T[String])
+    }
+
     def xsql =
       <xsql>
         SELECT id, name FROM groups
@@ -16,23 +25,29 @@ object Group {
   }
 
   val find = new SelectOneBy[Int, Group] {
+
+    resultMap = new ResultMap[Group] {
+      idArg("id", T[Int])
+      arg("name", T[String])
+    }
+
     def xsql =
       <xsql>
-        SELECT id, name FROM groups WHERE id =#{{id}}
+        SELECT id, name FROM groups WHERE id ={ ?[Int]("id") }
       </xsql>
   }
 
   val findWithMembers = new SelectOneBy[Int, Group] {
 
     resultMap = new ResultMap[Group] {
-      idArg("id")
-      arg("name")
+      idArg("id", T[Int])
+      arg("name", T[String])
       collection[Member](property = "members",
         resultMap = new ResultMap[Member] {
-          idArg("B_id")
-          arg("B_name")
-          arg("B_birthday")
-          arg("B_group_id")
+          idArg("B_id", T[Int])
+          arg("B_name", T[String])
+          arg("B_birthday", T[Option[Date]], JdbcType.DATE)
+          arg("B_group_id", T[Int])
         })
     }
 
@@ -52,28 +67,28 @@ object Group {
             ON
               A.id = B.group_id
         WHERE
-            A.id =#{{id}}
+            A.id ={ ?[Int]("id") }
       </xsql>
   }
 
   val create = new Insert[Group] {
     def xsql =
       <xsql>
-        INSERT INTO groups (name) VALUES (#{{name}})
+        INSERT INTO groups (name) VALUES ({ ?[String]("name") })
       </xsql>
   }
 
   val update = new Update[Group] {
     def xsql =
       <xsql>
-        UPDATE groups SET name = #{{name}} WHERE id = #{{id}}
+        UPDATE groups SET name ={ ?[String]("name") } WHERE id ={ ?[Int]("id") }
       </xsql>
   }
 
   val delete = new Delete[Int] {
     def xsql =
       <xsql>
-        DELETE FROM groups WHERE id = #{{id}}
+        DELETE FROM groups WHERE id ={ ?[Int]("id") }
       </xsql>
   }
 

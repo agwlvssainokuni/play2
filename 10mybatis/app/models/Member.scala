@@ -3,6 +3,7 @@ package models
 import java.util.Date
 
 import org.mybatis.scala.mapping._
+import org.mybatis.scala.mapping.Binding._
 
 case class Member(var id: Int, var name: String, var birthday: Option[Date], var groupId: Int) {
   var group: Group = null
@@ -11,6 +12,14 @@ case class Member(var id: Int, var name: String, var birthday: Option[Date], var
 object Member {
 
   val list = new SelectList[Member] {
+
+    resultMap = new ResultMap[Member] {
+      idArg("id", T[Int])
+      arg("name", T[String])
+      arg("birthday", T[Option[Date]], JdbcType.DATE)
+      arg("group_id", T[Int])
+    }
+
     def xsql =
       <xsql>
         SELECT id, name, birthday, group_id FROM members
@@ -18,23 +27,31 @@ object Member {
   }
 
   val find = new SelectOneBy[Int, Member] {
+
+    resultMap = new ResultMap[Member] {
+      idArg("id", T[Int])
+      arg("name", T[String])
+      arg("birthday", T[Option[Date]], JdbcType.DATE)
+      arg("group_id", T[Int])
+    }
+
     def xsql =
       <xsql>
-        SELECT id, name, birthday, group_id FROM members WHERE id = #{{id}}
+        SELECT id, name, birthday, group_id FROM members WHERE id ={ ?[Int]("id") }
       </xsql>
   }
 
   val findWithGroup = new SelectOneBy[Int, Member] {
 
     resultMap = new ResultMap[Member] {
-      idArg("id")
-      arg("name")
-      arg("birthday")
-      arg("group_id")
+      idArg("id", T[Int])
+      arg("name", T[String])
+      arg("birthday", T[Option[Date]], JdbcType.DATE)
+      arg("group_id", T[Int])
       association[Group](property = "group",
         resultMap = new ResultMap[Group] {
-          idArg("B_id")
-          arg("B_name")
+          idArg("B_id", T[Int])
+          arg("B_name", T[String])
         })
     }
 
@@ -54,7 +71,7 @@ object Member {
             ON
               A.group_id = B.id
         WHERE
-            A.id =#{{id}}
+            A.id ={ ?[Int]("id") }
       </xsql>
   }
 
@@ -67,9 +84,9 @@ object Member {
             group_id
         )
         VALUES (
-            #{{name}},
-            #{{birthday}},
-            #{{groupId}}
+            { ?[String]("name") },
+            { ?[Option[Date]]("birthday", JdbcType.DATE) },
+            { ?[Int]("groupId") }
         )
       </xsql>
   }
@@ -79,18 +96,18 @@ object Member {
       <xsql>
         UPDATE members
         SET
-            name = #{{name}},
-            birthday = #{{birthday}},
-            group_id = #{{groupId}}
+            name ={ ?[String]("name") },
+            birthday ={ ?[Option[Date]]("birthday", JdbcType.DATE) },
+            group_id ={ ?[Int]("groupId") }
         WHERE
-            id = #{{id}}
+            id ={ ?[Int]("id") }
       </xsql>
   }
 
   val delete = new Delete[Int] {
     def xsql =
       <xsql>
-        DELETE FROM members WHERE id = #{{id}}
+        DELETE FROM members WHERE id ={ ?[Int]("id") }
       </xsql>
   }
 
