@@ -20,8 +20,8 @@ class GroupSpec extends Specification {
     for (item <- (0 until groups.length).zip(groups).zip(members)) {
       item match {
         case ((i, gname), (mname, bdate)) =>
-          Group.create(gname)
-          Member.create(mname, Some(bdate), i + 1)
+          Group.create(Group(gname))
+          Member.create(Member(mname, Some(bdate), i + 1))
       }
     }
 
@@ -146,7 +146,7 @@ class GroupSpec extends Specification {
           createData(groups, members)
           // 実行
           val pre = Group.find(1)
-          val result = Group.update(1, "グループ１０")
+          val result = Group.update(1, Group("グループ１０"))
           val post = Group.find(1)
           // 検証
           result must equalTo(1)
@@ -162,7 +162,7 @@ class GroupSpec extends Specification {
           // 事前条件
           createData(groups, members)
           // 実行
-          val result = Group.update(0, "グループ１０")
+          val result = Group.update(0, Group("グループ１０"))
           // 検証
           result must equalTo(0)
         }

@@ -8,11 +8,11 @@
 	<dt>誕生日</dt>
 	<dd>@member.birthday</dd>
 	<dt>グループ名</dt>
-	<dd>@group.getOrElse(Group(0, "")).name</dd>
+	<dd>@group.getOrElse(Group("")).name</dd>
 </dl>
-<a href="@MemberController.edit(member.id)">編集</a>
+<a href="@MemberController.edit(member.id.get)">編集</a>
 |
-<a href="@MemberController.delete(member.id)">削除</a>
+<a href="@MemberController.delete(member.id.get)">削除</a>
 <br>
 <a href="@MemberController.list()">一覧へ戻る</a>
 }

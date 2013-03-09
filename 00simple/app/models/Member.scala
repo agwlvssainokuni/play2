@@ -6,13 +6,18 @@ import java.util.Date
 import anorm._
 import anorm.SqlParser._
 
-case class Member(id: Int, name: String, birthday: Option[Date], groupId: Int)
+case class Member(name: String, birthday: Option[Date], groupId: Int) {
+  var id: Option[Int] = None
+}
 
 object Member {
 
   val parse = {
     int("members.id") ~ str("members.name") ~ (date("members.birthday")?) ~ int("members.group_id") map {
-      case id ~ name ~ birthday ~ groupId => Member(id, name, birthday, groupId)
+      case id ~ name ~ birthday ~ groupId =>
+        val member = Member(name, birthday, groupId)
+        member.id = Some(id)
+        member
     }
   }
 
@@ -49,7 +54,7 @@ object Member {
         case mem ~ grp => (mem, grp)
       })*) headOption
 
-  def create(name: String, birthday: Option[Date], groupId: Int)(implicit c: Connection) =
+  def create(member: Member)(implicit c: Connection) =
     SQL("""
         INSERT INTO members (
             name,
@@ -62,9 +67,9 @@ object Member {
             {groupId}
         )
         """).on(
-      'name -> name, 'birthday -> birthday, 'groupId -> groupId).executeUpdate()
+      'name -> member.name, 'birthday -> member.birthday, 'groupId -> member.groupId).executeUpdate()
 
-  def update(id: Int, name: String, birthday: Option[Date], groupId: Int)(implicit c: Connection) =
+  def update(id: Int, member: Member)(implicit c: Connection) =
     SQL("""
         UPDATE members
         SET
@@ -74,7 +79,7 @@ object Member {
         WHERE
             id = {id}
         """).on(
-      'id -> id, 'name -> name, 'birthday -> birthday, 'groupId -> groupId).executeUpdate()
+      'id -> id, 'name -> member.name, 'birthday -> member.birthday, 'groupId -> member.groupId).executeUpdate()
 
   def delete(id: Int)(implicit c: Connection) =
     SQL("""

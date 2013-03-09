@@ -11,7 +11,6 @@ import views.html
 object GroupController extends Controller {
 
   val groupForm: Form[Group] = Form(mapping(
-    "id" -> ignored(0),
     "name" -> nonEmptyText(4, 255))(Group.apply)(Group.unapply))
 
   def list() = Action {
@@ -29,7 +28,7 @@ object GroupController extends Controller {
       groupForm.bindFromRequest().fold(
         errors => BadRequest(html.groups.fresh(errors)),
         group => {
-          Group.create(group.name)
+          Group.create(group)
           Redirect(routes.GroupController.list())
         })
     }
@@ -58,7 +57,7 @@ object GroupController extends Controller {
       groupForm.bindFromRequest().fold(
         errors => BadRequest(html.groups.edit(id, errors)),
         group => {
-          Group.update(id, group.name) match {
+          Group.update(id, group) match {
             case 0 => NotFound
             case _ => Redirect(routes.GroupController.show(id))
           }

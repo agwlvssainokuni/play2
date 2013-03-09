@@ -5,13 +5,18 @@ import java.sql.Connection
 import anorm._
 import anorm.SqlParser._
 
-case class Group(id: Int, name: String)
+case class Group(name: String) {
+  var id: Option[Int] = None
+}
 
 object Group {
 
   val parse = {
     int("groups.id") ~ str("groups.name") map {
-      case id ~ name => Group(id, name)
+      case id ~ name =>
+        val group = Group(name)
+        group.id = Some(id)
+        group
     }
   }
 
@@ -56,17 +61,17 @@ object Group {
           })
       } headOption
 
-  def create(name: String)(implicit c: Connection) =
+  def create(group: Group)(implicit c: Connection) =
     SQL("""
         INSERT INTO groups (name) VALUES ({name})
         """).on(
-      'name -> name).executeUpdate()
+      'name -> group.name).executeUpdate()
 
-  def update(id: Int, name: String)(implicit c: Connection) =
+  def update(id: Int, group: Group)(implicit c: Connection) =
     SQL("""
         UPDATE groups SET name = {name} WHERE id = {id}
         """).on(
-      'id -> id, 'name -> name).executeUpdate()
+      'id -> id, 'name -> group.name).executeUpdate()
 
   def delete(id: Int)(implicit c: Connection) =
     SQL("""

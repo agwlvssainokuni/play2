@@ -15,10 +15,10 @@
 	<tbody>
 		@members.map { member =>
 		<tr>
-			<td><a href="@MemberController.show(member.id)">@member.name</a></td>
+			<td><a href="@MemberController.show(member.id.get)">@member.name</a></td>
 			<td>@member.birthday</td>
-			<td><a href="@MemberController.edit(member.id)">編集</a></td>
-			<td><a href="@MemberController.delete(member.id)">削除</a></td>
+			<td><a href="@MemberController.edit(member.id.get)">編集</a></td>
+			<td><a href="@MemberController.delete(member.id.get)">削除</a></td>
 		</tr>
 		}
 	</tbody>

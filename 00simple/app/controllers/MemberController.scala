@@ -11,7 +11,6 @@ import views.html
 object MemberController extends Controller {
 
   val memberForm: Form[Member] = Form(mapping(
-    "id" -> ignored(0),
     "name" -> nonEmptyText(4, 255),
     "birthday" -> optional(date("yyyyMMdd")),
     "groupId" -> number)(Member.apply)(Member.unapply))
@@ -35,7 +34,7 @@ object MemberController extends Controller {
         member => {
           Group.find(member.groupId) match {
             case Some(_) =>
-              Member.create(member.name, member.birthday, member.groupId)
+              Member.create(member)
               Redirect(routes.MemberController.list())
             case None =>
               BadRequest(html.members.fresh(memberForm.fill(member), Group.list()))
@@ -69,7 +68,7 @@ object MemberController extends Controller {
         member => {
           Group.find(member.groupId) match {
             case Some(_) =>
-              Member.update(id, member.name, member.birthday, member.groupId) match {
+              Member.update(id, member) match {
                 case 0 => NotFound
                 case _ => Redirect(routes.MemberController.show(id))
               }

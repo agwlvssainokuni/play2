@@ -20,8 +20,8 @@ class GroupControllerSpec extends Specification {
     for (item <- (0 until groups.length).zip(groups).zip(members)) {
       item match {
         case ((i, gname), (mname, bdate)) =>
-          Group.create(gname)
-          Member.create(mname, Some(bdate), i + 1)
+          Group.create(Group(gname))
+          Member.create(Member(mname, Some(bdate), i + 1))
       }
     }
 
