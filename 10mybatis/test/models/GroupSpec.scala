@@ -6,7 +6,8 @@ import org.mybatis.scala.session._
 import org.specs2.mutable._
 
 import models._
-import play.api.Play
+import play.api.Play.current
+import play.api.db.DB
 import play.api.test._
 import play.api.test.Helpers._
 
@@ -28,8 +29,8 @@ class GroupSpec extends Specification {
 
     "データが存在しないならば、空リストが返却される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           // 実行
           val result = Group.list()
@@ -41,8 +42,8 @@ class GroupSpec extends Specification {
 
     "データが3件ならば、3要素のリストが返却される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           createData(groups, members)
           // 実行
@@ -59,8 +60,8 @@ class GroupSpec extends Specification {
 
     "データが存在しないならば、Noneが返却される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           // 実行
           val result = Group.find(1)
@@ -72,8 +73,8 @@ class GroupSpec extends Specification {
 
     "データが3件あって、存在するキーを指定したら、データが返却される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           createData(groups, members)
           // 実行
@@ -86,8 +87,8 @@ class GroupSpec extends Specification {
 
     "データが3件あって、存在しないキーを指定したら、Noneが返却される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           createData(groups, members)
           // 実行
@@ -103,8 +104,8 @@ class GroupSpec extends Specification {
 
     "データが存在しないならば、Noneが返却される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           // 実行
           val result = Group.findWithMembers(1)
@@ -116,8 +117,8 @@ class GroupSpec extends Specification {
 
     "データが3件あって、存在するキーを指定したら、データが返却される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           createData(groups, members)
           // 実行
@@ -131,8 +132,8 @@ class GroupSpec extends Specification {
 
     "データが3件あって、存在しないキーを指定したら、Noneが返却される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           createData(groups, members)
           // 実行
@@ -148,8 +149,8 @@ class GroupSpec extends Specification {
 
     "存在するキーを指定したら、データが更新される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           createData(groups, members)
           // 実行
@@ -166,8 +167,8 @@ class GroupSpec extends Specification {
 
     "存在しないキーを指定したら、データが更新されない" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           createData(groups, members)
           // 実行
@@ -183,8 +184,8 @@ class GroupSpec extends Specification {
 
     "存在するキーを指定したら、データが削除される" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           createData(groups, members)
           // 実行
@@ -201,8 +202,8 @@ class GroupSpec extends Specification {
 
     "存在しないキーを指定したら、データが削除されない" in {
       running(FakeApplication()) {
-        MyBatis.application = Play.current
-        MyBatis.withTransaction { implicit s =>
+        MyBatis.dataSource = DB.getDataSource()
+        MyBatis.sessionManager.transaction { implicit s =>
           // 事前条件
           createData(groups, members)
           // 実行
